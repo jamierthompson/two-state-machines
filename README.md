@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# The two state machines inside useChat
 
-## Getting Started
+A live companion to [the piece of the same name](https://jamiethompson.dev/writing/two-state-machines-inside-use-chat/).
+One real chat turn, with instruments beside it: the four-value `status`, the
+state on every part of the latest assistant message, and every chunk the
+transport hands to `useChat`.
 
-First, run the development server:
+## Stack
+
+Next.js 16 (App Router) · React 19 · AI SDK 7 with `useChat` · Vercel AI
+Gateway · shadcn/ui (Base UI) with the AI Elements patterns · Tailwind CSS 4 ·
+TypeScript 7 · Biome (lint) · Prettier (format) · Vitest · Playwright
+
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
+cp .env.example .env.local   # then add an AI Gateway key
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Create a key with `vercel ai-gateway api-keys create --name two-state-machines`
+and put it in `.env.local` as `AI_GATEWAY_API_KEY`. The model defaults to
+`anthropic/claude-haiku-5.5`; set `AI_GATEWAY_MODEL` to any
+`provider/model` id from the gateway that supports tools and reasoning.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## What to try
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Weather** runs a tool with no approval: watch the tool part walk
+  `input-streaming → input-available → output-available`.
+- **Delete** runs a tool gated by `toolApproval`. The stream closes while the
+  part sits in `approval-requested`, so `status` is `ready` and the composer
+  shows Send. Untick "Continue automatically" to see that nothing resumes
+  until the app calls `sendMessage()` with no arguments.
+- **Stop** mid-stream: the partial parts stay, and `status` returns to `ready`.
 
-## Learn More
+## Checks
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+pnpm typecheck
+pnpm lint
+pnpm test        # the approval pause, against the real SDK with a mock model
+pnpm test:e2e    # the same flow in the browser, with a canned stream
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `src/app/api/chat/route.ts`: `streamText` with two mock tools, one behind approval.
+- `src/lib/logging-transport.ts`: the default transport with a tap for the wire panel.
+- `src/components/chat.tsx`: `useChat`, the composer, and the one derivation that looks one level down.
+- `src/components/thread.tsx`: parts rendered by `type` then `state`.
+- `src/components/instruments.tsx`: the status, parts, and wire panels.
