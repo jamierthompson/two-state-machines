@@ -59,3 +59,7 @@ and the e2e test intercepts `/api/chat`. Playwright needs its browser once:
 - `src/components/chat.tsx`: `useChat`, the composer, and the one derivation that looks one level down.
 - `src/components/thread.tsx`: parts rendered by `type` then `state`.
 - `src/components/instruments.tsx`: the status, parts, and wire panels.
+
+## License
+
+[MIT](LICENSE)
