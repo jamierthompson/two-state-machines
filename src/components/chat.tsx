@@ -34,7 +34,7 @@ import type { ChatMessage } from "@/lib/chat-message";
 import { LoggingTransport, type WireEntry } from "@/lib/logging-transport";
 
 const SUGGESTIONS = [
-  "What's the weather in Reykjavík?",
+  "What's the weather in Kansas City, MO?",
   "Delete scratch/notes.md",
   "Say hello in one sentence.",
 ];

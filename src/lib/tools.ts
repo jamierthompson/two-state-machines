@@ -30,7 +30,7 @@ export const tools = {
       const seed = hash(city.toLowerCase());
       return {
         city,
-        temperatureC: (seed % 30) - 4,
+        temperatureF: (seed % 55) + 25,
         condition: conditions[seed % conditions.length],
       };
     },
