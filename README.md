@@ -14,6 +14,8 @@ TypeScript 7 · Biome (lint) · Prettier (format) · Vitest · Playwright
 
 ## Run it
 
+Needs Node 24 (see `.nvmrc`) and pnpm.
+
 ```bash
 pnpm install
 cp .env.example .env.local   # then add an AI Gateway key
@@ -44,9 +46,15 @@ pnpm test        # the approval pause, against the real SDK with a mock model
 pnpm test:e2e    # the same flow in the browser, with a canned stream
 ```
 
+Neither suite needs a gateway key: the unit test runs against a mock model
+and the e2e test intercepts `/api/chat`. Playwright needs its browser once:
+`pnpm exec playwright install chromium`.
+
 ## Structure
 
 - `src/app/api/chat/route.ts`: `streamText` with two mock tools, one behind approval.
+- `src/lib/tools.ts`: the two tools. Nothing real happens; the delays make the states visible.
+- `src/lib/model.ts`: the default model, overridable with `AI_GATEWAY_MODEL`.
 - `src/lib/logging-transport.ts`: the default transport with a tap for the wire panel.
 - `src/components/chat.tsx`: `useChat`, the composer, and the one derivation that looks one level down.
 - `src/components/thread.tsx`: parts rendered by `type` then `state`.
