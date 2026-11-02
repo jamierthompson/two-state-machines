@@ -99,6 +99,9 @@ function partDetail(part: ChatMessage["parts"][number]) {
   if (part.type === "text" || part.type === "reasoning") {
     return `${part.text.length} chars`;
   }
+  if (part.type === "custom") {
+    return part.kind;
+  }
   if (part.type.startsWith("tool-")) {
     const tool = part as Extract<typeof part, { toolCallId: string }>;
     if ("approval" in tool && tool.approval && "approved" in tool.approval) {
@@ -176,6 +179,8 @@ function chunkDetail(chunk: Extract<WireEntry, { kind: "chunk" }>["chunk"]) {
       return chunk.finishReason ?? "";
     case "error":
       return chunk.errorText;
+    case "custom":
+      return chunk.kind;
     default:
       return "";
   }

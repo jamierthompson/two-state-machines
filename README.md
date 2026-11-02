@@ -1,6 +1,7 @@
 # The two state machines inside useChat
 
-A live companion to [the piece of the same name](https://jamiethompson.dev/writing/two-state-machines-inside-use-chat/).
+A live companion to [the piece of the same name](https://jamiethompson.dev/writing/two-state-machines-inside-use-chat/),
+running at [two-state-machines.vercel.app](https://two-state-machines.vercel.app).
 One real chat turn, with instruments beside it: the four-value `status`, the
 state on every part of the latest assistant message, and every chunk the
 transport hands to `useChat`.
